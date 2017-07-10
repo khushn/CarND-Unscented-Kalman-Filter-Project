@@ -109,6 +109,8 @@ private:
   // NOTE: We don't need a separate function for sigma point generation
   // this function does generation of all the points 
   void AugmentedSigmaPoints(MatrixXd* Xsig_out);
+
+  void SigmaPointPrediction(double delta_t, MatrixXd& Xsig_aug, MatrixXd* Xsig_out);
 };
 
 #endif /* UKF_H */
