@@ -17,11 +17,13 @@ UKF::UKF() {
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
 
+  //set state dimension
+  n_x_ = 5;
   // initial state vector
-  x_ = VectorXd(5);
+  x_ = VectorXd(n_x_);
 
   // initial covariance matrix
-  P_ = MatrixXd(5, 5);
+  P_ = MatrixXd(n_x_, n_x_);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
   std_a_ = 30;
@@ -58,14 +60,23 @@ UKF::UKF() {
       0, 0, 1, 0, 
       0, 0, 0, 1;
 
-   //set state dimension
-  n_x_ = 5;
+  
 
   // the augmentation matrix dimention, when we add the noise part
   n_aug_ = 7;
 
   //define spreading parameter
   lambda_ = 3 - n_x_;
+
+  // We compute the weights only once
+  weights_ = VectorXd(2*n_aug_+1);
+  double weight_0 = lambda_/(lambda_+n_aug_);
+ 
+  weights_[0] = weight_0;
+  for (int i=1; i<2*n_aug_+1; i++) {  //2n+1 weights
+    double weight = 0.5/(n_aug_+lambda_);
+    weights_[i] = weight;
+  }
 }
 
 UKF::~UKF() {}
@@ -142,6 +153,12 @@ void UKF::Prediction(double delta_t) {
   // Step 2: Predict the sigma points
   MatrixXd Xsig_pred = MatrixXd();
   SigmaPointPrediction(delta_t, Xsig_aug, &Xsig_pred);
+
+  // Step 3: Predict mean and covariance
+  VectorXd x_pred = VectorXd();
+  MatrixXd P_pred = MatrixXd();
+  PredictMeanAndCovariance(Xsig_pred, &x_pred, &P_pred);
+
   
 }
 
@@ -272,4 +289,43 @@ void UKF::SigmaPointPrediction(double delta_t, MatrixXd& Xsig_aug, MatrixXd* Xsi
   //write result
   *Xsig_out = Xsig_pred;
 
+}
+
+void UKF::PredictMeanAndCovariance(MatrixXd& Xsig_pred, VectorXd* x_out, MatrixXd* P_out) {
+
+  //create vector for predicted state
+  VectorXd x = VectorXd(n_x_);
+
+  //create covariance matrix for prediction
+  MatrixXd P = MatrixXd(n_x_, n_x_);
+
+  //predicted state mean
+  x.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
+    x = x+ weights_(i) * Xsig_pred.col(i);
+  }
+
+  //predicted state covariance matrix
+  P.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
+
+    // state difference
+    VectorXd x_diff = Xsig_pred.col(i) - x;
+    //angle normalization
+    while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
+    while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
+
+    P = P + weights_(i) * x_diff * x_diff.transpose() ;
+  }
+
+
+  //print result
+  std::cout << "Predicted state" << std::endl;
+  std::cout << x << std::endl;
+  std::cout << "Predicted covariance matrix" << std::endl;
+  std::cout << P << std::endl;
+
+  //write result
+  *x_out = x;
+  *P_out = P;
 }
