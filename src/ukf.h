@@ -112,7 +112,11 @@ private:
 
   void SigmaPointPrediction(double delta_t, MatrixXd& Xsig_aug, MatrixXd* Xsig_out);
 
-  void PredictMeanAndCovariance(MatrixXd& Xsig_pred, VectorXd* x_pred, MatrixXd* P_pred);
+  void PredictMeanAndCovariance(VectorXd* x_pred, MatrixXd* P_pred);
+
+  // This is to transform our state prediction, to a form which is got by radar, 
+  // so that radar update is easy
+  void PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out);
 };
 
 #endif /* UKF_H */
