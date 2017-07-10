@@ -102,6 +102,13 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+private: 
+
+  // Get the augmented sigma points
+  // NOTE: We don't need a separate function for sigma point generation
+  // this function does generation of all the points 
+  void AugmentedSigmaPoints(MatrixXd* Xsig_out);
 };
 
 #endif /* UKF_H */

@@ -57,9 +57,19 @@ UKF::UKF() {
       0, 1, 0, 0, 
       0, 0, 1, 0, 
       0, 0, 0, 1;
+
+   //set state dimension
+  n_x_ = 5;
+
+  // the augmentation matrix dimention, when we add the noise part
+  n_aug_ = 7;
+
+  //define spreading parameter
+  lambda_ = 3 - n_x_;
 }
 
 UKF::~UKF() {}
+
 
 /**
  * @param {MeasurementPackage} meas_package The latest measurement data of
@@ -122,6 +132,15 @@ void UKF::Prediction(double delta_t) {
   Complete this function! Estimate the object's location. Modify the state
   vector, x_. Predict sigma points, the state, and the state covariance matrix.
   */
+  MatrixXd Xsig_aug = MatrixXd();
+
+  // 1st step: Generate the sigma points
+  // NOTE: This get the augmented points i.e. 2 extra in the bottom right for 
+  // process noise
+  AugmentedSigmaPoints(&Xsig_aug);
+
+  
+  
 }
 
 /**
@@ -152,4 +171,46 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the radar NIS.
   */
+}
+
+void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
+
+//create augmented mean vector
+VectorXd x_aug = VectorXd(n_aug_);
+
+//create augmented state covariance
+MatrixXd P_aug = MatrixXd(n_aug_, n_aug_);
+
+//create sigma point matrix
+MatrixXd Xsig_aug = MatrixXd(n_aug_, 2 * n_aug_ + 1);
+
+//create augmented mean state
+x_aug.head(n_x_) = x_;
+x_aug(n_x_) = 0;
+x_aug(n_x_+1) = 0;
+
+//create augmented covariance matrix
+P_aug.fill(0.0);
+P_aug.topLeftCorner(n_x_,n_x_) = P_;
+P_aug(n_x_,n_x_) = std_a_*std_a_;
+P_aug(n_x_+1,n_x_+1) = std_yawdd_*std_yawdd_;
+
+//create square root matrix
+MatrixXd L = P_aug.llt().matrixL();
+
+//create augmented sigma points
+Xsig_aug.col(0)  = x_aug;
+for (int i = 0; i< n_aug_; i++)
+{
+  Xsig_aug.col(i+1)       = x_aug + sqrt(lambda_+n_aug_) * L.col(i);
+  Xsig_aug.col(i+1+n_aug_) = x_aug - sqrt(lambda_+n_aug_) * L.col(i);
+}
+  
+
+//print result
+//std::cout << "Xsig_aug = " << std::endl << Xsig_aug << std::endl;
+
+//write result
+*Xsig_out = Xsig_aug;
+
 }
