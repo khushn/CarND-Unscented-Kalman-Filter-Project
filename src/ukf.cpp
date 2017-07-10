@@ -137,15 +137,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Prediction(dt);
 
   // Do the Update part of the UKF roadmap
-  if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {}
-
-    // As a first step of the radar update, we need to 
-    // transform the predicted state as per radar data
-    VectorXd z_out = VectorXd(3);
-    MatrixXd S_out = MatrixXd(3, 3);
-    ukf.PredictRadarMeasurement(&z_out, &S_out);
+  if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+    UpdateRadar(meas_package);
   } else {
-
+    UpdateLidar(meas_package);
   }
 }
 
@@ -206,6 +201,22 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the radar NIS.
   */
+
+  // As a first step of the radar update, we need to 
+  // transform the predicted state as per radar data
+  MatrixXd ZSig_out = MatrixXd();
+  VectorXd z_out = VectorXd();
+  MatrixXd S_out = MatrixXd();
+  PredictRadarMeasurement(&ZSig_out, &z_out, &S_out);
+
+  float rho = meas_package.raw_measurements_[0];
+  float phi = meas_package.raw_measurements_[1];
+  float rho_dot = meas_package.raw_measurements_[2];
+
+  VectorXd z = VectorXd(3);
+  z << rho, phi, rho_dot;
+  UpdateRadarState(ZSig_out, z_out, S_out, z);
+  
 }
 
 void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
@@ -346,7 +357,7 @@ void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
   *P_out = P;
 }
 
-void UKF::PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out) {
+void UKF::PredictRadarMeasurement(MatrixXd* ZSig_out, VectorXd* z_out, MatrixXd* S_out) {
 
   //set measurement dimension, radar can measure r, phi, and r_dot
   int n_z = 3;
@@ -414,6 +425,64 @@ void UKF::PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out) {
   std::cout << "S: " << std::endl << S << std::endl;
 
   //write result
+  *ZSig_out = Zsig;
   *z_out = z_pred;
   *S_out = S;
+}
+
+void UKF::UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, VectorXd& z) {
+
+
+  //set measurement dimension, radar can measure r, phi, and r_dot
+  int n_z = 3;
+
+  //create matrix for cross correlation Tc
+  MatrixXd Tc = MatrixXd(n_x_, n_z);
+
+/*******************************************************************************
+ * Student part begin
+ ******************************************************************************/
+
+  //calculate cross correlation matrix
+  Tc.fill(0.0);
+  for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
+
+    //residual
+    VectorXd z_diff = Zsig.col(i) - z_pred;
+    //angle normalization
+    while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
+    while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+
+    // state difference
+    VectorXd x_diff = Xsig_pred_.col(i) - x_;
+    //angle normalization
+    while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
+    while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
+
+    Tc = Tc + weights_[i] * x_diff * z_diff.transpose();
+  }
+
+  //Kalman gain K;
+  MatrixXd K = Tc * S.inverse();
+
+  //residual
+  VectorXd z_diff = z - z_pred;
+
+  //angle normalization
+  while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
+  while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+
+  //update state mean and covariance matrix
+  x_ = x_ + K * z_diff;
+  P_ = P_ - K*S*K.transpose();
+
+/*******************************************************************************
+ * Student part end
+ ******************************************************************************/
+
+  //print result
+  std::cout << "Updated state x: " << std::endl << x_ << std::endl;
+  std::cout << "Updated state covariance P: " << std::endl << P_ << std::endl;
+
+
 }

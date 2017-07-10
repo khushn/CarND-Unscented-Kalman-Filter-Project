@@ -116,7 +116,9 @@ private:
 
   // This is to transform our state prediction, to a form which is got by radar, 
   // so that radar update is easy
-  void PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out);
+  void PredictRadarMeasurement(MatrixXd* ZSig, VectorXd* z_out, MatrixXd* S_out);
+
+  void UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, VectorXd& z);
 };
 
 #endif /* UKF_H */
