@@ -12,7 +12,7 @@ using std::vector;
  */
 UKF::UKF() {
   // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = true;
+  use_laser_ = false;
 
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
@@ -55,10 +55,11 @@ UKF::UKF() {
   */
 
   is_initialized_ = false;
-  P_ << 1, 0, 0, 0,
-      0, 1, 0, 0, 
-      0, 0, 1, 0, 
-      0, 0, 0, 1;
+  P_ << 1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0, 
+      0, 0, 1, 0, 0, 
+      0, 0, 0, 1, 0, 
+      0, 0, 0, 0, 1;
 
   
 
@@ -97,10 +98,12 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   }
   
 
+
    if (!is_initialized_) {
      /**
       Initialize state.
       */
+    cout << "initializing state with measurement: " << meas_package.raw_measurements_ << endl;
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
@@ -111,13 +114,15 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       //cout << "rho: " << rho << ", phi: " << phi << ", rho dot: " << rho_dot << endl;
       float px = rho * cos(phi);
       float py = rho * sin(phi);
-      x_ << px, py;
+      x_ << px, py, 0, 0, 0;
     }
     else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
       
-      x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0;
+      x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0;
     }
 
+    cout << "done initializing, x_: " << x_ << endl;
+    
     time_us_ = meas_package.timestamp_;
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -216,7 +221,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   VectorXd z = VectorXd(3);
   z << rho, phi, rho_dot;
   UpdateRadarState(ZSig_out, z_out, S_out, z);
-  
+
 }
 
 void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {

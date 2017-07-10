@@ -46,11 +46,13 @@ int main()
     if (length && length > 2 && data[0] == '4' && data[1] == '2')
     {
 
+
       auto s = hasData(std::string(data));
       if (s != "") {
       	
         auto j = json::parse(s);
 
+      
         std::string event = j[0].get<std::string>();
         
         if (event == "telemetry") {
@@ -90,6 +92,7 @@ int main()
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
           }
+          //cout << "after reading values" << endl;
           float x_gt;
     	  float y_gt;
     	  float vx_gt;
@@ -104,7 +107,8 @@ int main()
     	  gt_values(2) = vx_gt;
     	  gt_values(3) = vy_gt;
     	  ground_truth.push_back(gt_values);
-          
+        
+        //cout << "before calling process measurement " << endl;
           //Call ProcessMeasurment(meas_package) for Kalman filter
     	  ukf.ProcessMeasurement(meas_package);    	  
 
