@@ -63,37 +63,51 @@ In this case we don't have as much leeway to reduce process noise parameters.
 But we need to take into account the combined effect of Lidar and Radar. So we can clearly reduce process noise. 
 Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we experiement and record the results with the ideal (or at least better) values of process noise.
 
-#### RMSE Values after tuning of process noise values
-
+#### RMSE Values at various process noise values 
 <table>
 <tr>
-<th>RMSE attribute</th>
-<th>Lidar only</th>
-<th>Radar only</th>
-<th>Both</th>
+<th/>
+<th>std_a=30; std_yaw=30</th>
+<th>std_a=6; std_yaw=3</th>
+<th>std_a=3; std_yaw=1.5</th>
+<th>std_a=1.5; std_yaw=1.5</th>
+<th>std_a=1; std_yaw=1</th>
+<th>std_a=0; std_yaw=0</th>
 </tr>
 <tr>
 <td>X</td>
-<td>.1840</td>
-<td>.2333</td>
-<td>.0963</td>
+<td>..0976</td>
+<td>.08</td>
+<td>.0736</td>
+<td>.0678</td>
+<td>.0647</td>
+<td>.13.97</td>
 </tr>
 <tr>
 <td>Y</td>
-<td>.1543</td>
-<td>.3183</td>
-<td>.0854</td>
+<td>.1210</td>
+<td>.0942</td>
+<td>.0867</td>
+<td>.0845</td>
+<td>.0838</td>
+<td>5.456</td>
 </tr>
 <tr>
 <td>VX</td>
-<td>.6056</td>
-<td>.5284</td>
-<td>.4136</td>
+<td>.8693</td>
+<td>.4202</td>
+<td>.3593</td>
+<td>.3415</td>
+<td>.3313</td>
+<td>4.2161</td>
 </tr>
 <tr>
 <td>VY</td>
-<td>.4862</td>
-<td>.7036</td>
-<td>.4807</td>
+<td>.9820</td>
+<td>.3562</td>
+<td>.2702</td>
+<td>.2490</td>
+<td>.2327</td>
+<td>1.5236</td>
 </tr>
 </table>
