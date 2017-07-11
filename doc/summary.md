@@ -46,7 +46,7 @@ As we see in the table above the RMSE values are clearly too high, for the given
 
 We use the following NIS stastical chi square distribution to compute NIS. 
 
-<image src="nis_chi_squared_dstbn.png.png" alt="missing NIS chi squared distribution" />
+<image src="nis_chi_squared_dstbn.png" alt="missing NIS chi squared distribution" />
 <a> (Image Source: Udacity classroom lectures)</a>
 
 #### RMSE Values after tuning of process noise values
