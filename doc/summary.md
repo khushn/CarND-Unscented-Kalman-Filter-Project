@@ -80,7 +80,7 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 <td>.08</td>
 <td>.0736</td>
 <td>.0678</td>
-<td>.0647</td>
+<td><b>.0647</b></td>
 <td>.13.97</td>
 </tr>
 <tr>
