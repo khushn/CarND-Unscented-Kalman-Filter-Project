@@ -49,6 +49,14 @@ We use the following NIS stastical chi square distribution to compute NIS.
 <image src="nis_chi_squared_dstbn.png" alt="missing NIS chi squared distribution" />
 <a> (Image Source: Udacity classroom lectures)</a>
 
+##### NIS distribution for the current values
+
+###### Laser NIS distribution
+<image src="laser_nis_distbn.png" alt="missing Laser NIS" />
+
+###### Radar NIS distribution
+<image src="radar_nis_distbn.png" alt="missing Radar NIS" />
+
 #### RMSE Values after tuning of process noise values
 
 <table>
