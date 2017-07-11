@@ -71,7 +71,7 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 <th>std_a=6; std_yaw=3</th>
 <th>std_a=3; std_yaw=1.5</th>
 <th>std_a=1.5; std_yaw=1.5</th>
-<th>std_a=1; std_yaw=1</th>
+<th>std_a=1; std_yaw=1 (best)</th>
 <th>std_a=0; std_yaw=0</th>
 </tr>
 <tr>
@@ -89,7 +89,7 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 <td>.0942</td>
 <td>.0867</td>
 <td>.0845</td>
-<td>.0838</td>
+<td><b>.0838</b></td>
 <td>5.456</td>
 </tr>
 <tr>
@@ -98,7 +98,7 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 <td>.4202</td>
 <td>.3593</td>
 <td>.3415</td>
-<td>.3313</td>
+<td><b>.3313</b></td>
 <td>4.2161</td>
 </tr>
 <tr>
@@ -107,7 +107,7 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 <td>.3562</td>
 <td>.2702</td>
 <td>.2490</td>
-<td>.2327</td>
+<td><b>.2327</b></td>
 <td>1.5236</td>
 </tr>
 </table>
