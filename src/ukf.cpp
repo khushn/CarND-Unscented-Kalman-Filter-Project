@@ -15,7 +15,7 @@ UKF::UKF() {
   use_laser_ = true;
 
   // if this is false, radar measurements will be ignored (except during init)
-  use_radar_ = true;
+  use_radar_ = false;
 
   //set state dimension
   n_x_ = 5;
@@ -154,6 +154,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   } else {
     UpdateLidar(meas_package);
   }
+
+  // print the output
+  cout << "x_ = " << x_ << endl;
+  cout << "P_ = " << P_ << endl;
 }
 
 /**
@@ -340,7 +344,7 @@ void UKF::SigmaPointPrediction(double delta_t, MatrixXd& Xsig_aug, MatrixXd* Xsi
   }
 
   //print result
-  std::cout << "Xsig_pred = " << std::endl << Xsig_pred << std::endl;
+  //std::cout << "Xsig_pred = " << std::endl << Xsig_pred << std::endl;
 
   //write result
   *Xsig_out = Xsig_pred;
@@ -376,10 +380,10 @@ void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
 
 
   //print result
-  std::cout << "Predicted state" << std::endl;
-  std::cout << x << std::endl;
-  std::cout << "Predicted covariance matrix" << std::endl;
-  std::cout << P << std::endl;
+  //std::cout << "Predicted state" << std::endl;
+  //std::cout << x << std::endl;
+  //std::cout << "Predicted covariance matrix" << std::endl;
+  //std::cout << P << std::endl;
 
   //write result
   *x_out = x;
@@ -450,8 +454,8 @@ void UKF::PredictRadarMeasurement(MatrixXd* ZSig_out, VectorXd* z_out, MatrixXd*
  ******************************************************************************/
 
   //print result
-  std::cout << "z_pred: " << std::endl << z_pred << std::endl;
-  std::cout << "S: " << std::endl << S << std::endl;
+  //std::cout << "z_pred: " << std::endl << z_pred << std::endl;
+  //std::cout << "S: " << std::endl << S << std::endl;
 
   //write result
   *ZSig_out = Zsig;
@@ -510,8 +514,8 @@ void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, Vect
  ******************************************************************************/
 
   //print result
-  std::cout << "Updated state x: " << std::endl << x_ << std::endl;
-  std::cout << "Updated state covariance P: " << std::endl << P_ << std::endl;
+  //std::cout << "Updated state x: " << std::endl << x_ << std::endl;
+  //std::cout << "Updated state covariance P: " << std::endl << P_ << std::endl;
 
 
 }
