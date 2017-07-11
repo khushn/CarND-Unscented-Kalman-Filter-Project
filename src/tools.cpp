@@ -5,9 +5,23 @@ using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
 
-Tools::Tools() {}
+Tools::Tools() {
+	outfile_.open("data/obj_pose-laser-radar-ukf-output.txt");	
+	outfile2_.open("data/full-output.txt");
+}
 
-Tools::~Tools() {}
+Tools::~Tools() {
+	outfile_.close();
+	outfile2_.close();
+}
+
+ofstream* Tools::getOStream() {
+	return &outfile_;
+}
+
+ofstream* Tools::getOStream2() {
+	return &outfile2_;
+}
 
 VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
                               const vector<VectorXd> &ground_truth) {

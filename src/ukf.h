@@ -7,6 +7,8 @@
 #include <string>
 #include <fstream>
 
+using namespace std;
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -74,6 +76,10 @@ public:
   double lambda_;
 
 
+  // NIS stores at each step
+  double nis_laser_;
+  double nis_radar_;
+
   /**
    * Constructor
    */
@@ -125,6 +131,10 @@ private:
   void PredictRadarMeasurement(MatrixXd* ZSig, VectorXd* z_out, MatrixXd* S_out);
 
   void UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, VectorXd& z);
+
+  double calculateNIS(VectorXd z, VectorXd z_pred, MatrixXd S);
+
+  ofstream ofile_;
 };
 
 #endif /* UKF_H */

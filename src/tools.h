@@ -1,6 +1,7 @@
 #ifndef TOOLS_H_
 #define TOOLS_H_
 #include <vector>
+#include <fstream>
 #include "Eigen/Dense"
 
 using Eigen::MatrixXd;
@@ -24,6 +25,13 @@ public:
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
 
+  ofstream* getOStream();
+  ofstream* getOStream2();
+
+  
+private: 
+  ofstream outfile_;
+  ofstream outfile2_;
 };
 
 #endif /* TOOLS_H_ */

@@ -1,5 +1,6 @@
 #include <uWS/uWS.h>
 #include <iostream>
+#include <fstream>
 #include "json.hpp"
 #include <math.h>
 #include "ukf.h"
@@ -68,11 +69,12 @@ int main()
     	  string sensor_type;
     	  iss >> sensor_type;
 
+        float px;
+        float py;
     	  if (sensor_type.compare("L") == 0) {
       	  		meas_package.sensor_type_ = MeasurementPackage::LASER;
           		meas_package.raw_measurements_ = VectorXd(2);
-          		float px;
-      	  		float py;
+          		
           		iss >> px;
           		iss >> py;
           		meas_package.raw_measurements_ << px, py;
@@ -91,16 +93,24 @@ int main()
           		meas_package.raw_measurements_ << ro,theta, ro_dot;
           		iss >> timestamp;
           		meas_package.timestamp_ = timestamp;
+
+              // for use in logging
+              px = ro*cos(theta);
+              py = ro*sin(theta);
           }
           //cout << "after reading values" << endl;
           float x_gt;
     	  float y_gt;
     	  float vx_gt;
     	  float vy_gt;
+        float yaw_gt;
+        float yawrate_gt;
     	  iss >> x_gt;
     	  iss >> y_gt;
     	  iss >> vx_gt;
     	  iss >> vy_gt;
+        iss >> yaw_gt;
+        iss >> yawrate_gt;
     	  VectorXd gt_values(4);
     	  gt_values(0) = x_gt;
     	  gt_values(1) = y_gt; 
@@ -144,6 +154,23 @@ int main()
           // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 	  
+          // output the visualization data to output data files
+          
+          // the first file having only basic data
+          ofstream* outfileptr = tools.getOStream();
+          *outfileptr << p_x << "\t" << p_y << "\t" << v1 << "\t" << v2 << "\t" 
+                 << px << "\t" << py << "\t" << 
+                 x_gt << "\t" << y_gt << "\t" << vx_gt << "\t" << vy_gt << "\n";
+          
+
+          // the second file used by extended Ipython generator
+          double v_gt = sqrt(vx_gt*vx_gt + vy_gt*vy_gt);
+          ofstream* outfileptr2 = tools.getOStream2();
+          *outfileptr2 << ukf.x_[0] << "\t" <<ukf.x_[1] << "\t" << ukf.x_[2] << "\t" << ukf.x_[3] << "\t" << ukf.x_[4] 
+          << "\t" << px << "\t" << py << "\t" <<
+          x_gt << "\t" << y_gt << "\t" << v_gt << "\t" << yaw_gt << "\t" << yawrate_gt << "\t" <<
+          vx_gt << "\t" << vy_gt << "\t" << ukf.nis_laser_ << "\t" << ukf.nis_radar_ << "\n";
+
         }
       } else {
         

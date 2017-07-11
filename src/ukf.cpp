@@ -85,10 +85,17 @@ UKF::UKF() {
     double weight = 0.5/(n_aug_+lambda_);
     weights_[i] = weight;
   }
+
 }
 
 UKF::~UKF() {}
 
+double UKF::calculateNIS(VectorXd z, VectorXd z_pred, MatrixXd S) {
+   double nis=0;
+   VectorXd z_diff = z-z_pred;
+   nis = z_diff.transpose() * S * z_diff;
+   return nis;
+}
 
 /**
  * @param {MeasurementPackage} meas_package The latest measurement data of
@@ -155,6 +162,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     UpdateLidar(meas_package);
   }
 
+
   // print the output
   cout << "x_ = " << x_ << endl;
   cout << "P_ = " << P_ << endl;
@@ -219,6 +227,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_laser_) * P_;
 
+  // update NIS for Lidar
+  nis_laser_ = calculateNIS(z, z_pred, S);
 }
 
 /**
@@ -509,9 +519,8 @@ void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, Vect
   x_ = x_ + K * z_diff;
   P_ = P_ - K*S*K.transpose();
 
-/*******************************************************************************
- * Student part end
- ******************************************************************************/
+  // calculate NIS for Radar
+  nis_radar_ = calculateNIS(z, z_pred, S);
 
   //print result
   //std::cout << "Updated state x: " << std::endl << x_ << std::endl;
