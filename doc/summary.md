@@ -51,11 +51,17 @@ We use the following NIS stastical chi square distribution to compute NIS.
 
 ##### NIS distribution for the current values
 
-###### Laser NIS distribution
+###### Laser NIS distribution (Using threshold 5.991)
+So clearly we have scope to reduced the process noise parameters
 <image src="laser_nis_distbn.png" alt="missing Laser NIS" />
 
-###### Radar NIS distribution
+###### Radar NIS distribution (Using threshold 7.815)
+In this case we don't have as much leeway to reduce process noise parameters. 
+
 <image src="radar_nis_distbn.png" alt="missing Radar NIS" />
+
+But we need to take into account the combined effect of Lidar and Radar. So we can clearly reduce process noise. 
+Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we experiement and record the results with the ideal (or at least better) values of process noise.
 
 #### RMSE Values after tuning of process noise values
 
