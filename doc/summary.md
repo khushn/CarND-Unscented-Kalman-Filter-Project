@@ -116,3 +116,5 @@ Moreover, the values (std_a_=30 and std_yawdd_=30) are too high for cycle. So we
 
 The final visualization at noise values (std_a_=1; std_yawdd_=1) is given below
 <image src="final_complete_visual.png" alt="missing final complete visualization" />
+
+The full visualization HTML using the nice tools provided by <a href="https://github.com/udacity/CarND-Mercedes-SF-Utilities"> Mercedes </a> are given <a href="/ukf-visualization-extended.html"> here </a>
