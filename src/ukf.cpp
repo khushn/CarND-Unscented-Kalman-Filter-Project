@@ -12,7 +12,7 @@ using std::vector;
  */
 UKF::UKF() {
   // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = false;
+  use_laser_ = true;
 
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
@@ -61,7 +61,14 @@ UKF::UKF() {
       0, 0, 0, 1, 0, 
       0, 0, 0, 0, 1;
 
-  
+  H_laser_ = MatrixXd(2, n_x_);
+  H_laser_ << 1, 0, 0, 0, 0, 
+              0, 1, 0, 0, 0;
+
+  //measurement covariance matrix - laser
+  R_laser_ = MatrixXd(2, 2);
+  R_laser_ << std_laspx_*std_laspx_, 0,
+        0, std_laspy_*std_laspy_;
 
   // the augmentation matrix dimention, when we add the noise part
   n_aug_ = 7;
@@ -191,6 +198,23 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
   You'll also need to calculate the lidar NIS.
   */
+  VectorXd z = VectorXd(2);
+  z << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1];
+
+  VectorXd z_pred = H_laser_ * x_;
+  VectorXd y = z - z_pred;
+  MatrixXd Ht = H_laser_.transpose();
+  MatrixXd S = H_laser_ * P_ * Ht + R_laser_;
+  MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
+  MatrixXd K = PHt * Si;
+
+  //new estimate
+  x_ = x_ + (K * y);
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
+  P_ = (I - K * H_laser_) * P_;
+
 }
 
 /**
@@ -435,7 +459,7 @@ void UKF::PredictRadarMeasurement(MatrixXd* ZSig_out, VectorXd* z_out, MatrixXd*
   *S_out = S;
 }
 
-void UKF::UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, VectorXd& z) {
+void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, VectorXd& z) {
 
 
   //set measurement dimension, radar can measure r, phi, and r_dot

@@ -28,6 +28,12 @@ public:
   ///* state covariance matrix
   MatrixXd P_;
 
+  // Laser mesauremunt noise
+  MatrixXd R_laser_;
+
+  // Laser H matrix
+  MatrixXd H_laser_;
+
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
 
