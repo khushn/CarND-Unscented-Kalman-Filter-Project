@@ -8,7 +8,7 @@
 #### RMSE values before tuning of process noise params (std_a_=30; std_yawdd_ = 30)
 <table>
 <tr>
-<th>RMSI attribute</th>
+<th>RMSE attribute</th>
 <th>Lidar only</th>
 <th>Radar only</th>
 <th>Both</th>
@@ -39,11 +39,16 @@
 </tr>
 </table>
 
+As we see in the table above the RMSE values are clearly too high, for the given process noise parameters. We need to tune them. And we use NIS for it.
+
+<image src="nis.png" alt="missing NIS image" />
+<a> (Image Source: Udacity classroom lectures)</a>
+
 #### RMSE Values after tuning of process noise values
 
 <table>
 <tr>
-<th>RMSI attribute</th>
+<th>RMSE attribute</th>
 <th>Lidar only</th>
 <th>Radar only</th>
 <th>Both</th>
