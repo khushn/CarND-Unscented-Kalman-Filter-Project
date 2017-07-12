@@ -118,3 +118,14 @@ The final visualization at noise values (std_a_=1; std_yawdd_=1) is given below
 <image src="final_complete_visual.png" alt="missing final complete visualization" />
 
 The full visualization HTML using the nice tools provided by <a href="https://github.com/udacity/CarND-Mercedes-SF-Utilities"> Mercedes </a> is given <a href="/ukf-visualization-extended.html"> here </a>
+
+#### Optional project of catching Runaway robot/Car
+
+I was able to do this as well. The robot was always getting caught in just around 6 seconds with a very optimal effort from the hunter car!
+
+The below image shows the screenshot of one such run. 
+
+<image src="success_caught_the_robot.png" alt="missing screen grab of run away robot capture"/>
+
+The link to the project which has the code for the Runaway Car is below: 
+https://github.com/khushn/CarND-Catch-Run-Away-Car-UKF
