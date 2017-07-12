@@ -7,6 +7,8 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::vector;
 
+double normalize_angle(double theta);
+
 /**
  * Initializes Unscented Kalman filter
  */
@@ -382,8 +384,8 @@ void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x;
     //angle normalization
-    while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
-    while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
+    x_diff(3) = normalize_angle(x_diff(3));
+    
 
     P = P + weights_(i) * x_diff * x_diff.transpose() ;
   }
@@ -445,8 +447,7 @@ void UKF::PredictRadarMeasurement(MatrixXd* ZSig_out, VectorXd* z_out, MatrixXd*
     VectorXd z_diff = Zsig.col(i) - z_pred;
 
     //angle normalization
-    while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
-    while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+    z_diff(1) = normalize_angle(z_diff(1));
 
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
@@ -493,14 +494,13 @@ void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, Vect
     //residual
     VectorXd z_diff = Zsig.col(i) - z_pred;
     //angle normalization
-    while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
-    while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+    z_diff(1) = normalize_angle(z_diff(1));
 
     // state difference
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
+
     //angle normalization
-    while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
-    while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
+    x_diff(3) = normalize_angle(x_diff(3));
 
     Tc = Tc + weights_[i] * x_diff * z_diff.transpose();
   }
@@ -512,8 +512,7 @@ void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, Vect
   VectorXd z_diff = z - z_pred;
 
   //angle normalization
-  while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
-  while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+  z_diff(1) = normalize_angle(z_diff(1));
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
@@ -527,4 +526,11 @@ void UKF::  UpdateRadarState(MatrixXd& Zsig, VectorXd& z_pred, MatrixXd& S, Vect
   //std::cout << "Updated state covariance P: " << std::endl << P_ << std::endl;
 
 
+}
+
+double normalize_angle(double theta) {
+  //angle normalization
+    while (theta> M_PI) theta-=2.*M_PI;
+    while (theta<-M_PI) theta+=2.*M_PI;
+    return theta;
 }
